@@ -38,9 +38,14 @@
 
     <ul class="rules" id="rules-list"></ul>
 
-    <button type="button" class="add" id="add-rule">
+    <button type="button" class="add" id="add-rule" aria-describedby="limit-note">
       <span class="plus" aria-hidden="true">+</span> Add rule
     </button>
+
+    <!-- Shown instead of a tooltip, which a disabled button can't be relied on
+         to surface. The button stays focusable via aria-disabled so the reason
+         is reachable by keyboard and screen reader too. -->
+    <p class="limit-note" id="limit-note" hidden></p>
   </main>
 
   <footer class="feedback">
@@ -100,7 +105,10 @@
         </div>
 
         <div class="field">
-          <label class="field-label">Text to find</label>
+          <span class="field-head">
+            <label class="field-label">Text to find</label>
+            <span class="counter find-counter" hidden></span>
+          </span>
           <input type="text" class="input find" spellcheck="false" autocomplete="off"
                  maxlength="200" placeholder="e.g. NEW VIDEO:">
         </div>
@@ -120,7 +128,10 @@
         </div>
 
         <div class="field replacement-field" hidden>
-          <label class="field-label">Replace with</label>
+          <span class="field-head">
+            <label class="field-label">Replace with</label>
+            <span class="counter replacement-counter" hidden></span>
+          </span>
           <input type="text" class="input replacement" spellcheck="false" autocomplete="off"
                  maxlength="200" placeholder="New text">
         </div>

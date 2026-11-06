@@ -14,6 +14,7 @@
 
   var SAVE_DEBOUNCE_MS = 180;
   var UNDO_WINDOW_MS = 6000;
+  var COUNTER_SHOWS_AT = 20; // characters remaining before the counter appears
 
   var el = {
     globalEnabled: document.getElementById('global-enabled'),
@@ -28,6 +29,7 @@
     undoBar: document.getElementById('undo-bar'),
     undoText: document.getElementById('undo-text'),
     undoBtn: document.getElementById('undo-btn'),
+    limitNote: document.getElementById('limit-note'),
     template: document.getElementById('rule-template')
   };
 
@@ -106,9 +108,47 @@
     el.count.textContent = total === 0 ? '' : active + ' of ' + total + ' active';
     el.count.hidden = total === 0;
 
+    // aria-disabled rather than disabled: a disabled button drops out of the
+    // tab order, taking the explanation with it. This keeps it focusable and
+    // announced, and addRule() refuses the click anyway.
     var full = total >= Store.MAX_RULES;
-    el.addRule.disabled = full;
-    el.addRule.title = full ? 'You’ve reached the limit of ' + Store.MAX_RULES + ' rules.' : '';
+    el.addRule.setAttribute('aria-disabled', String(full));
+    el.limitNote.hidden = !full;
+    el.limitNote.textContent = full
+      ? 'That’s the limit of ' + Store.MAX_RULES + ' rules. Delete one to add another.'
+      : '';
+  }
+
+  /** Show how much room is left, but only once it's close enough to matter. */
+  function updateCounter(counter, value) {
+    if (!counter) return;
+    var max = Store.MAX_FIELD_LENGTH;
+    var length = value.length;
+    var near = length >= max - COUNTER_SHOWS_AT;
+
+    counter.hidden = !near;
+    if (!near) return;
+
+    counter.textContent = length + '/' + max;
+    counter.classList.toggle('at-limit', length >= max);
+  }
+
+  /**
+   * Fires when a keystroke is about to be rejected for length. `maxlength`
+   * blocks the character silently and no `input` event follows, so this is the
+   * only moment we can say why nothing happened.
+   *
+   * Nothing changes, so no save runs and no "Saved." overwrites the message.
+   */
+  function watchFieldLimit(input, label) {
+    input.addEventListener('beforeinput', function (event) {
+      var inserting = !event.inputType || event.inputType.indexOf('insert') === 0;
+      if (!inserting) return;
+      if (input.value.length < Store.MAX_FIELD_LENGTH) return;
+      // A selection being replaced still fits, so that isn't a rejection.
+      if (input.selectionStart !== input.selectionEnd) return;
+      showStatus(label + ' stops at ' + Store.MAX_FIELD_LENGTH + ' characters.');
+    });
   }
 
   /** Full structural render: used on load, add, delete and reorder. */
@@ -176,6 +216,9 @@
     toggle.checked = rule.enabled;
 
     // --- wiring ---
+    watchFieldLimit(q('.find'), 'Text to find');
+    watchFieldLimit(q('.replacement'), 'Replace with');
+
     disclosure.addEventListener('click', function () {
       setOpen(rule.id, openRuleId !== rule.id);
     });
@@ -235,6 +278,9 @@
     q('.card-body').hidden = !isOpen;
 
     card.querySelector('[data-flag="case"]').hidden = !rule.caseSensitive;
+
+    updateCounter(q('.find-counter'), rule.find);
+    updateCounter(q('.replacement-counter'), rule.replacement);
 
     // Only call it out as a problem once they've started filling it in, so a
     // brand-new empty card doesn't shout at them.

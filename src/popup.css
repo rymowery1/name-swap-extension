@@ -336,9 +336,27 @@ body {
 
 .field { display: flex; flex-direction: column; gap: 4px; }
 
+.field-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .field-label {
   font-size: 11px;
   color: var(--muted);
+}
+
+/* Appears only in the last stretch before the limit, so it isn't noise. */
+.counter {
+  font-size: 10px;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.counter.at-limit {
+  color: var(--warn-text);
+  font-weight: 500;
 }
 
 .input {
@@ -448,9 +466,17 @@ select.input {
   font-weight: 500;
   cursor: pointer;
 }
-.add:hover:not(:disabled) { opacity: 0.88; }
-.add:disabled { opacity: 0.3; cursor: default; }
+.add:hover:not(:disabled):not([aria-disabled="true"]) { opacity: 0.88; }
+.add:disabled,
+.add[aria-disabled="true"] { opacity: 0.3; cursor: default; }
 .plus { font-weight: 500; }
+
+.limit-note {
+  margin: 8px 0 0;
+  padding: 0 4px;
+  font-size: 11px;
+  color: var(--warn-text);
+}
 
 /* --- footer feedback ------------------------------------------------------ */
 .feedback { flex: 0 0 auto; }

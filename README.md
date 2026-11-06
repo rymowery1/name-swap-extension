@@ -53,7 +53,9 @@ By default capitalisation is ignored.
 - **Nothing is destructive.** Switching a rule off, or the whole extension off, puts the original
   titles straight back on any open YouTube tabs.
 - **Limits:** up to 50 rules, 200 characters per text box. If rules would push a title past 500
-  characters, the original title is kept instead.
+  characters, the original title is kept instead. The limits tell you when you reach them — a
+  counter appears in the last 20 characters of a text box, and the Add rule button says why it
+  has stopped rather than just greying out.
 - **A rule that would empty a title is ignored**, and the original title is kept — so you can't
   accidentally blank out every video.
 - **Deleting shows an Undo** for about six seconds, while the popup stays open.
