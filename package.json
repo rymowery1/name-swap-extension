@@ -4,6 +4,6 @@
   "private": true,
   "description": "Chrome extension that rewrites the YouTube video titles you see, using your own rules.",
   "scripts": {
-    "test": "node --test test/engine.test.cjs"
+    "test": "node --test test/engine.test.cjs test/storage.test.cjs"
   }
 }

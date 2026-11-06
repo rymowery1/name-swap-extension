@@ -4,6 +4,10 @@
  */
 (function () {
   'use strict';
+  // Inside the real extension, chrome.runtime.id is set. Replacing the real
+  // storage API there would quietly send every save somewhere else.
+  if (window.chrome && window.chrome.runtime && window.chrome.runtime.id) return;
+
   var KEY = '__ytc_dev_store';
   var listeners = [];
   var store = {};

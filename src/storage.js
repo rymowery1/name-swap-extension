@@ -11,6 +11,12 @@
   var KEY = 'config';
   var SCHEMA_VERSION = 1;
 
+  /* Hard limits on what storage will hold. The popup enforces them too, but
+     they live here so that anything else that writes a config — a future
+     import, a hand-edited value — is held to the same bounds. */
+  var MAX_RULES = 50;
+  var MAX_FIELD_LENGTH = 200;
+
   function defaults() {
     return { schemaVersion: SCHEMA_VERSION, enabled: true, rules: [] };
   }
@@ -36,7 +42,7 @@
   var ACTIONS = ['remove', 'replace'];
 
   function str(value) {
-    return typeof value === 'string' ? value : '';
+    return typeof value === 'string' ? value.slice(0, MAX_FIELD_LENGTH) : '';
   }
 
   /**
@@ -59,7 +65,7 @@
 
   function normalize(raw) {
     var config = raw && typeof raw === 'object' ? raw : {};
-    var rules = Array.isArray(config.rules) ? config.rules.map(normalizeRule) : [];
+    var rules = Array.isArray(config.rules) ? config.rules.slice(0, MAX_RULES).map(normalizeRule) : [];
 
     // Duplicate ids would make the popup edit the wrong card.
     var seen = Object.create(null);
@@ -152,6 +158,8 @@
   global.TitleStore = {
     KEY: KEY,
     SCHEMA_VERSION: SCHEMA_VERSION,
+    MAX_RULES: MAX_RULES,
+    MAX_FIELD_LENGTH: MAX_FIELD_LENGTH,
     defaults: defaults,
     newRule: newRule,
     newId: newId,

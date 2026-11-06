@@ -4,6 +4,9 @@
   "version": "1.0.0",
   "description": "Rewrite the YouTube video titles you see, using your own rules. Changes only what's on your screen.",
   "permissions": ["storage"],
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+  },
   "action": {
     "default_popup": "src/popup.html",
     "default_title": "YouTube Title Changer",

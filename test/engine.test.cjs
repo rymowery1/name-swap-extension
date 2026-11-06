@@ -234,3 +234,26 @@ test('ruleInvalidReason explains the problem, or returns null when valid', () =>
   assert.match(E.ruleInvalidReason(rule({ find: 'a', action: 'replace', replacement: '' })), /replacement/i);
   assert.equal(E.ruleInvalidReason(rule({ find: 'a' })), null);
 });
+
+/* ---------- Security: bounded output ---------- */
+test('chained rules cannot grow a title past the cap', () => {
+  // Each rule turns every "a" into ten, so seven rules would mean ~10M chars.
+  const grow = Array.from({ length: 7 }, (_, i) =>
+    rule({ id: 'g' + i, find: 'a', action: 'replace', replacement: 'aaaaaaaaaa', caseSensitive: true }));
+  assert.equal(run('a video title', grow), 'a video title');
+});
+
+test('replacements that stay under the cap still apply', () => {
+  const out = run('Hi', [rule({ find: 'Hi', action: 'replace', replacement: 'x'.repeat(200) })]);
+  assert.equal(out, 'x'.repeat(200));
+});
+
+test('a title already over the cap can still be shortened', () => {
+  const long = 'NEW: ' + 'y'.repeat(600);
+  assert.equal(run(long, [rule({ match: 'startsWith', find: 'NEW: ' })]), 'y'.repeat(600));
+});
+
+test('markup in a replacement is returned as literal text', () => {
+  const payload = '<img src=x onerror=alert(1)>';
+  assert.equal(run('Hello', [rule({ find: 'Hello', action: 'replace', replacement: payload })]), payload);
+});

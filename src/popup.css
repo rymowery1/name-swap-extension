@@ -448,7 +448,8 @@ select.input {
   font-weight: 500;
   cursor: pointer;
 }
-.add:hover { opacity: 0.88; }
+.add:hover:not(:disabled) { opacity: 0.88; }
+.add:disabled { opacity: 0.3; cursor: default; }
 .plus { font-weight: 500; }
 
 /* --- footer feedback ------------------------------------------------------ */

@@ -105,6 +105,10 @@
     el.empty.hidden = total > 0;
     el.count.textContent = total === 0 ? '' : active + ' of ' + total + ' active';
     el.count.hidden = total === 0;
+
+    var full = total >= Store.MAX_RULES;
+    el.addRule.disabled = full;
+    el.addRule.title = full ? 'You’ve reached the limit of ' + Store.MAX_RULES + ' rules.' : '';
   }
 
   /** Full structural render: used on load, add, delete and reorder. */
@@ -303,6 +307,7 @@
   }
 
   function addRule() {
+    if (config.rules.length >= Store.MAX_RULES) return;
     var rule = Store.newRule();
     config.rules.push(rule);
     openRuleId = rule.id;
@@ -368,6 +373,11 @@
   function performUndo() {
     if (!undo) return;
     var rule = undo.rule;
+    // Another popup may have filled the last slot while this one waited.
+    if (config.rules.length >= Store.MAX_RULES) {
+      dismissUndo();
+      return;
+    }
     var at = Math.min(undo.index, config.rules.length);
     config.rules.splice(at, 0, rule);
     dismissUndo();

@@ -52,6 +52,8 @@ By default capitalisation is ignored.
   rather than pretending it worked.
 - **Nothing is destructive.** Switching a rule off, or the whole extension off, puts the original
   titles straight back on any open YouTube tabs.
+- **Limits:** up to 50 rules, 200 characters per text box. If rules would push a title past 500
+  characters, the original title is kept instead.
 - **A rule that would empty a title is ignored**, and the original title is kept — so you can't
   accidentally blank out every video.
 - **Deleting shows an Undo** for about six seconds, while the popup stays open.
@@ -83,7 +85,7 @@ risk breaking the page.
 npm test
 ```
 
-Runs the rules-engine unit tests (35 of them) in Node — no dependencies, no browser needed.
+Runs the rules-engine and storage unit tests (42 of them) in Node — no dependencies, no browser needed.
 
 ### Trying it without installing
 

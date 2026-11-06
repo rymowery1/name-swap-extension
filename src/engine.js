@@ -11,6 +11,12 @@
   var MATCH_MODES = ['contains', 'startsWith', 'endsWith'];
   var ACTIONS = ['remove', 'replace'];
 
+  /* Longest title the pipeline will produce. Real YouTube titles cap at 100
+     characters; this leaves plenty of room for replacements while stopping
+     chained rules (each turning "a" into "aaaaaaaaaa", say) from multiplying a
+     title into millions of characters and taking the tab down with it. */
+  var MAX_TITLE_LENGTH = 500;
+
   /**
    * Lowercase a string while guaranteeing the result has the exact same length
    * (in UTF-16 code units) as the input.
@@ -117,12 +123,15 @@
     var rules = Array.isArray(config.rules) ? config.rules : [];
     var current = originalTitle;
     var changed = false;
+    var limit = Math.max(MAX_TITLE_LENGTH, originalTitle.length);
 
     for (var i = 0; i < rules.length; i++) {
       var rule = rules[i];
       if (!rule || !rule.enabled) continue;
       if (!isRuleValid(rule)) continue;
       var next = applyRule(current, rule);
+      // Checked after every rule, so a runaway chain stops before it grows.
+      if (next.length > limit) return originalTitle;
       if (next !== current) {
         changed = true;
         current = next;
@@ -157,6 +166,7 @@
   var api = {
     MATCH_MODES: MATCH_MODES,
     ACTIONS: ACTIONS,
+    MAX_TITLE_LENGTH: MAX_TITLE_LENGTH,
     safeFold: safeFold,
     isRuleValid: isRuleValid,
     ruleInvalidReason: ruleInvalidReason,
