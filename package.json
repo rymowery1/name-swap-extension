@@ -1,0 +1,9 @@
+{
+  "name": "youtube-title-changer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chrome extension that rewrites the YouTube video titles you see, using your own rules.",
+  "scripts": {
+    "test": "node --test test/engine.test.cjs"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Title Changer",
+  "version": "1.0.0",
+  "description": "Rewrite the YouTube video titles you see, using your own rules. Changes only what's on your screen.",
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "src/popup.html",
+    "default_title": "YouTube Title Changer",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["src/engine.js", "src/storage.js", "src/content.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ]
+}

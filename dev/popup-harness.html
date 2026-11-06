@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Popup harness — YouTube Title Changer</title>
+  <style>
+    body { margin:0; background:#5a5f66; font:13px -apple-system,system-ui,sans-serif; }
+    #frame { width:380px; margin:24px auto; box-shadow:0 10px 40px rgba(0,0,0,.45); border-radius:10px; overflow:hidden; background:#fff; }
+    #tools { position:fixed; top:8px; left:8px; color:#fff; }
+    #tools button { font:inherit; padding:4px 8px; }
+  </style>
+</head>
+<body>
+  <div id="tools"><button id="reset">Reset storage</button></div>
+  <div id="frame"></div>
+
+  <script src="chrome-shim.js"></script>
+  <script>
+    document.getElementById('reset').addEventListener('click', function () {
+      window.__ytcDev.reset();
+      location.reload();
+    });
+
+    // Pull the real popup markup in rather than keeping a second copy of it.
+    fetch('../src/popup.html')
+      .then(function (r) { return r.text(); })
+      .then(function (html) {
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+
+        var bust = '?dev=' + Date.now(); // always pick up the latest edits
+        var css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = '../src/popup.css' + bust;
+        document.head.appendChild(css);
+
+        var frame = document.getElementById('frame');
+        Array.prototype.slice.call(doc.body.children).forEach(function (node) {
+          if (node.tagName !== 'SCRIPT') frame.appendChild(document.importNode(node, true));
+        });
+
+        // The popup's own stylesheet sizes <body>; re-point that at the frame.
+        var fix = document.createElement('style');
+        fix.textContent = '#frame{display:flex;flex-direction:column;max-height:560px;overflow:hidden;}';
+        document.head.appendChild(fix);
+
+        return ['../src/engine.js', '../src/storage.js', '../src/popup.js'].reduce(function (chain, src) {
+          return chain.then(function () {
+            return new Promise(function (resolve, reject) {
+              var s = document.createElement('script');
+              s.src = src + bust;
+              s.onload = resolve;
+              s.onerror = reject;
+              document.body.appendChild(s);
+            });
+          });
+        }, Promise.resolve());
+      })
+      .then(function () { window.__harnessReady = true; })
+      .catch(function (err) { document.getElementById('frame').textContent = 'Harness error: ' + err; });
+  </script>
+</body>
+</html>

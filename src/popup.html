@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>YouTube Title Changer</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="product">YouTube Title Changer</h1>
+    <div class="global-toggle">
+      <label class="switch" for="global-enabled">
+        <input type="checkbox" role="switch" id="global-enabled" checked>
+        <span class="track" aria-hidden="true"><span class="knob"></span></span>
+        <span class="switch-text" id="global-state">On</span>
+      </label>
+    </div>
+  </header>
+
+  <p class="paused" id="paused-note" hidden>
+    Paused. YouTube is showing its original titles.
+  </p>
+
+  <main class="body">
+    <div class="section-head">
+      <h2 class="section-title">Rules</h2>
+      <span class="count" id="rule-count"></span>
+    </div>
+
+    <p class="empty" id="empty-state" hidden>
+      No rules yet. Add a rule to start changing video titles.
+    </p>
+
+    <ul class="rules" id="rules-list"></ul>
+
+    <button type="button" class="add" id="add-rule">
+      <span class="plus" aria-hidden="true">+</span> Add rule
+    </button>
+  </main>
+
+  <footer class="feedback">
+    <!-- Polite region: save confirmations and validation notes. -->
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+    <!-- Assertive region: storage failures the user needs to notice. -->
+    <p class="error" id="error" role="alert" hidden></p>
+    <div class="undo" id="undo-bar" hidden>
+      <span class="undo-text" id="undo-text">Rule deleted.</span>
+      <button type="button" class="undo-btn" id="undo-btn">Undo</button>
+    </div>
+  </footer>
+
+  <template id="rule-template">
+    <li class="card" data-id="">
+      <div class="card-head">
+        <button type="button" class="disclosure" aria-expanded="false">
+          <svg class="chev" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M6 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.75"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="desc"></span>
+        </button>
+
+        <span class="flag" data-flag="case" title="Matches capital letters exactly" hidden>Aa</span>
+        <span class="flag warn" data-flag="invalid" hidden>Needs setup</span>
+
+        <div class="order">
+          <button type="button" class="icon-btn move-up" title="Move up">
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path d="M4 10l4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.75"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button type="button" class="icon-btn move-down" title="Move down">
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.75"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <label class="switch small rule-switch">
+          <input type="checkbox" role="switch" class="rule-enabled">
+          <span class="track" aria-hidden="true"><span class="knob"></span></span>
+        </label>
+      </div>
+
+      <div class="card-body" hidden>
+        <div class="field">
+          <label class="field-label">Where to look</label>
+          <select class="input match">
+            <option value="contains">Title contains</option>
+            <option value="startsWith">Title starts with</option>
+            <option value="endsWith">Title ends with</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Text to find</label>
+          <input type="text" class="input find" spellcheck="false" autocomplete="off"
+                 placeholder="e.g. NEW VIDEO:">
+        </div>
+
+        <div class="field">
+          <span class="field-label">What to do</span>
+          <div class="segmented" role="radiogroup">
+            <label class="seg">
+              <input type="radio" class="action" value="remove">
+              <span>Remove it</span>
+            </label>
+            <label class="seg">
+              <input type="radio" class="action" value="replace">
+              <span>Replace it</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field replacement-field" hidden>
+          <label class="field-label">Replace with</label>
+          <input type="text" class="input replacement" spellcheck="false" autocomplete="off"
+                 placeholder="New text">
+        </div>
+
+        <label class="checkline">
+          <input type="checkbox" class="case-sensitive">
+          <span>Match capital letters exactly</span>
+        </label>
+
+        <p class="hint invalid-hint" hidden></p>
+
+        <div class="card-foot">
+          <button type="button" class="danger delete-rule">Delete rule</button>
+        </div>
+      </div>
+    </li>
+  </template>
+
+  <script src="engine.js"></script>
+  <script src="storage.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

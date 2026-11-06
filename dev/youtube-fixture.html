@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>YouTube markup fixture</title>
+  <style>
+    body { font:14px -apple-system,system-ui,sans-serif; margin:20px; max-width:900px; }
+    h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#666; margin:22px 0 6px; }
+    .card { padding:8px 10px; border:1px solid #ddd; border-radius:6px; margin-bottom:6px; }
+    a { color:#065fd4; text-decoration:none; }
+    #controls { position:sticky; top:0; background:#fff; padding:10px 0; border-bottom:1px solid #ddd; }
+    button { font:inherit; padding:5px 9px; margin-right:6px; }
+  </style>
+</head>
+<body>
+  <div id="controls">
+    <button id="add-card">Add card (infinite scroll)</button>
+    <button id="recycle">Recycle card #1 (new video)</button>
+    <button id="rerender">YouTube overwrites titles</button>
+    <button id="navigate">SPA navigate</button>
+  </div>
+
+  <h2>Home grid — ytd-rich-item-renderer</h2>
+  <div id="grid">
+    <ytd-rich-item-renderer class="card">
+      <a id="video-title-link" href="/watch?v=aaaaaaaaaaa" title="NEW VIDEO: Making a desk from scratch">
+        <yt-formatted-string id="video-title">NEW VIDEO: Making a desk from scratch</yt-formatted-string>
+      </a>
+    </ytd-rich-item-renderer>
+    <ytd-rich-item-renderer class="card">
+      <a id="video-title-link" href="/watch?v=bbbbbbbbbbb" title="I tried EVERYTHING for 30 days">
+        <yt-formatted-string id="video-title">I tried EVERYTHING for 30 days</yt-formatted-string>
+      </a>
+    </ytd-rich-item-renderer>
+  </div>
+
+  <h2>Search results — ytd-video-renderer</h2>
+  <ytd-video-renderer class="card">
+    <a id="video-title" href="/watch?v=ccccccccccc"
+       title="NEW VIDEO: Hands-on review | TechChannel"
+       aria-label="NEW VIDEO: Hands-on review | TechChannel by TechChannel 2 days ago 1.2M views">NEW VIDEO: Hands-on review | TechChannel</a>
+  </ytd-video-renderer>
+
+  <h2>Watch page main title — ytd-watch-metadata</h2>
+  <ytd-watch-metadata class="card">
+    <div id="title">
+      <h1 class="ytd-watch-metadata">
+        <yt-formatted-string class="ytd-watch-metadata">NEW VIDEO: The full build, start to finish</yt-formatted-string>
+      </h1>
+    </div>
+  </ytd-watch-metadata>
+
+  <h2>Suggested — new lockup components</h2>
+  <div id="suggested">
+    <yt-lockup-view-model class="card">
+      <h3>
+        <a class="yt-lockup-metadata-view-model__title" href="/watch?v=ddddddddddd" title="I tried EVERYTHING to fix this">
+          <span class="yt-core-attributed-string">I tried EVERYTHING to fix this</span>
+        </a>
+      </h3>
+    </yt-lockup-view-model>
+  </div>
+
+  <h2>Shorts — must stay untouched (out of scope for v1)</h2>
+  <ytm-shorts-lockup-view-model class="card">
+    <a id="video-title" href="/shorts/eeeeeeeeeee">NEW VIDEO: a short</a>
+  </ytm-shorts-lockup-view-model>
+
+  <h2>Mixed markup — must stay untouched (not safely identifiable)</h2>
+  <ytd-video-renderer class="card">
+    <a id="video-title" href="/watch?v=fffffffffff">NEW VIDEO: <span>has</span> <b>nested</b> parts</a>
+  </ytd-video-renderer>
+
+  <script src="chrome-shim.js"></script>
+  <script src="../src/engine.js"></script>
+  <script src="../src/storage.js"></script>
+  <script src="../src/content.js"></script>
+  <script>
+    var n = 0;
+    document.getElementById('add-card').addEventListener('click', function () {
+      n++;
+      var el = document.createElement('ytd-rich-item-renderer');
+      el.className = 'card';
+      el.innerHTML = '<a id="video-title-link" href="/watch?v=lazy' + n + 'xxxxxx" title="NEW VIDEO: Lazy-loaded ' + n + '">' +
+                     '<yt-formatted-string id="video-title">NEW VIDEO: Lazy-loaded ' + n + '</yt-formatted-string></a>';
+      document.getElementById('grid').appendChild(el);
+    });
+
+    document.getElementById('recycle').addEventListener('click', function () {
+      // YouTube reuses a card's DOM node for a different video.
+      var card = document.querySelector('#grid ytd-rich-item-renderer');
+      var a = card.querySelector('a');
+      a.setAttribute('href', '/watch?v=recycled001');
+      a.setAttribute('title', 'NEW VIDEO: A completely different video');
+      card.querySelector('#video-title').textContent = 'NEW VIDEO: A completely different video';
+    });
+
+    document.getElementById('rerender').addEventListener('click', function () {
+      // YouTube re-renders and stomps on our text with its own.
+      document.querySelectorAll('#grid #video-title').forEach(function (node, i) {
+        node.textContent = 'NEW VIDEO: Restomped title ' + (i + 1);
+      });
+    });
+
+    document.getElementById('navigate').addEventListener('click', function () {
+      document.dispatchEvent(new CustomEvent('yt-navigate-finish', { bubbles: true }));
+    });
+  </script>
+</body>
+</html>
