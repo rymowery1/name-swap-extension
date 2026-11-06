@@ -13,8 +13,10 @@ const path = require('node:path');
 
 const SS = 4; // supersample factor
 
-const BG = [192, 57, 43]; // #c0392b
-const FG = [255, 255, 255];
+/* Amber ground with dark bars: stays legible on both a light and a dark
+   Chrome toolbar, and carries no platform branding. */
+const BG = [235, 182, 76]; // #EBB64C
+const FG = [21, 19, 14];   // #15130E
 
 function crc32(buf) {
   let c, crc = 0xffffffff;

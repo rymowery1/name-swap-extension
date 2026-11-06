@@ -58,6 +58,15 @@ By default capitalisation is ignored.
 - **"Needs setup"** on a card means the rule can't run yet (usually an empty *Text to find*, or
   *Replace* with nothing to replace it with). It stays saved, it just doesn't do anything.
 
+### How it looks
+
+Dark by default, with a light counterpart that follows your system setting. Amber marks whatever
+is switched on or selected, so on/off reads as a change in brightness rather than only colour —
+which keeps it legible on a dim screen or if you don't separate red and green easily.
+
+Type is Inter where you have it installed, falling back to your system font otherwise. The font is
+never fetched over the network, so the extension still makes no external requests at all.
+
 ### Where it works
 
 Home feed, search results, the watch page title, suggested/related videos, and subscriptions.

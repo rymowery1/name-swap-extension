@@ -1,45 +1,66 @@
 /* YouTube Title Changer — popup styles.
-   One surface, 380px wide, scrolls internally past 560px. */
+   Direction D: neutral dark. Dark surface, pill controls, rounded rule rows,
+   amber for on/selected states. No platform branding.
+   380px wide, scrolls internally past 560px. */
 
 :root {
-  --bg: #ffffff;
-  --bg-sunken: #f4f5f7;
-  --card: #ffffff;
-  --card-head: #fafbfc;
-  --line: #e3e5e9;
-  --line-strong: #c9ccd3;
-  --text: #16181d;
-  --text-dim: #646b78;
-  --text-faint: #8b919c;
-  --accent: #c0392b;
-  --accent-text: #ffffff;
-  --warn-bg: #fdf3e3;
-  --warn-text: #8a5a08;
-  --warn-line: #efd9ae;
-  --danger: #b3261e;
-  --focus: #1a73e8;
-  --radius: 8px;
-  --radius-sm: 6px;
+  --bg: #0F0F0F;
+  --surface: #1E1E1E;
+  --surface-2: #2C2C2C;
+  --input-bg: #121212;
+  --line: #262626;
+  --line-strong: #3A3A3A;
+  --text: #EDEDED;
+  --muted: #A6A6A6;
+  --faint: #8A8A8A;
+
+  --accent: #EBB64C;        /* fill for on / selected */
+  --accent-ink: #15130E;    /* text sitting on --accent */
+  --accent-line: #EBB64C;   /* borders, focus ring, accent text */
+
+  --switch-off-track: #43434A;
+  --switch-off-knob: #8A8A93;
+  --switch-on-track: #6B5526;
+
+  --warn-bg: #3A2F17;
+  --warn-text: #EBB64C;
+  --warn-line: #5A4A22;
+
+  --danger: #F0A9A1;
+  --danger-bg: #7F1D1D;
+
+  --radius: 10px;
+  --pill: 999px;
 }
 
-@media (prefers-color-scheme: dark) {
+/* Light counterpart — same structure and accent, inverted ground, so the popup
+   doesn't sit black against a light desktop. */
+@media (prefers-color-scheme: light) {
   :root {
-    --bg: #1b1d21;
-    --bg-sunken: #15171a;
-    --card: #23262b;
-    --card-head: #272b31;
-    --line: #35393f;
-    --line-strong: #4a4f57;
-    --text: #eceef1;
-    --text-dim: #a2a9b4;
-    --text-faint: #7d848f;
-    --accent: #e05c4b;
-    --accent-text: #1b1d21;
-    --warn-bg: #3a2f1c;
-    --warn-text: #f0cf92;
-    --warn-line: #574627;
-    --danger: #f08a82;
-    --focus: #7cb0f7;
+    --bg: #FFFFFF;
+    --surface: #F4F4F2;
+    --surface-2: #E7E7E3;
+    --input-bg: #FFFFFF;
+    --line: #E6E6E2;
+    --line-strong: #CECEC8;
+    --text: #17160F;
+    --muted: #5C5A52;
+    --faint: #76736A;
+
+    --accent: #EBB64C;
+    --accent-ink: #231C07;
+    --accent-line: #96690D;
+
+    --switch-off-track: #C9C9C3;
+    --switch-off-knob: #FFFFFF;
+    --switch-on-track: #E2CB95;
+
+    --warn-bg: #FDF4E0;
+    --warn-text: #74510C;
+    --warn-line: #E6D3A6;
+
+    --danger: #A3201A;
+    --danger-bg: #B3261E;
   }
 }
 
@@ -59,13 +80,12 @@ body {
   overflow: hidden;
   background: var(--bg);
   color: var(--text);
-  font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font: 13px/1.45 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-/* --- focus ---------------------------------------------------------------- */
 :focus-visible {
-  outline: 2px solid var(--focus);
+  outline: 2px solid var(--accent-line);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -77,33 +97,39 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 14px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--line);
-  background: var(--card-head);
 }
+
+.mark { flex: 0 0 auto; display: block; }
 
 .product {
   flex: 1 1 auto;
   margin: 0;
-  font-size: 13px;
-  font-weight: 650;
+  font-size: 14px;
+  font-weight: 500;
   letter-spacing: -0.01em;
 }
 
 .global-toggle { flex: 0 0 auto; }
 
+/* The switch itself shows on/off; the paused banner explains the off state.
+   Kept in the DOM so screen readers still announce it. */
 .switch-text {
-  min-width: 22px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-dim);
-  font-variant-numeric: tabular-nums;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 .paused {
   flex: 0 0 auto;
   margin: 0;
-  padding: 8px 14px;
+  padding: 9px 16px;
   font-size: 12px;
   color: var(--warn-text);
   background: var(--warn-bg);
@@ -115,45 +141,44 @@ body {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-  padding: 12px 14px 14px;
+  padding: 12px 12px 14px;
 }
 
 .section-head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 8px;
+  padding: 0 4px;
   margin-bottom: 8px;
 }
 
 .section-title {
   margin: 0;
-  font-size: 11px;
-  font-weight: 650;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
 }
 
 .count {
-  font-size: 11px;
-  color: var(--text-faint);
+  font-size: 12px;
+  color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
 
 .empty {
-  margin: 0 0 12px;
-  padding: 18px 14px;
+  margin: 0 0 10px;
+  padding: 20px 16px;
   text-align: center;
   font-size: 12px;
-  color: var(--text-dim);
-  background: var(--bg-sunken);
+  color: var(--muted);
+  background: var(--surface);
   border: 1px dashed var(--line-strong);
   border-radius: var(--radius);
 }
 
 .rules {
-  margin: 0 0 10px;
+  margin: 0 0 8px;
   padding: 0;
   list-style: none;
   display: flex;
@@ -164,50 +189,43 @@ body {
 
 /* --- rule card ------------------------------------------------------------ */
 .card {
-  border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: var(--card);
-  overflow: hidden;
+  background: var(--surface);
 }
 
-.card.is-open { border-color: var(--line-strong); }
-
-/* A stored-but-off rule reads quieter than an active one. */
-.card.is-off .desc { color: var(--text-faint); }
+.card.is-off .desc { color: var(--faint); }
 
 .card-head {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 8px 6px 4px;
-  background: var(--card-head);
+  gap: 8px;
+  padding: 9px 10px;
 }
-.card.is-open .card-head { border-bottom: 1px solid var(--line); }
 
 .disclosure {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 2px;
+  gap: 6px;
+  padding: 2px 0;
   border: 0;
   background: none;
   color: inherit;
   font: inherit;
   text-align: left;
   cursor: pointer;
-  border-radius: var(--radius-sm);
+  border-radius: 6px;
 }
 
 .chev {
   flex: 0 0 auto;
-  width: 14px;
-  height: 14px;
-  color: var(--text-faint);
+  width: 12px;
+  height: 12px;
+  color: var(--muted);
   transition: transform 120ms ease;
 }
-.card.is-open .chev { transform: rotate(90deg); }
+.card.is-open .chev { transform: rotate(90deg); color: var(--text); }
 
 .desc {
   min-width: 0;
@@ -219,48 +237,48 @@ body {
 
 .flag {
   flex: 0 0 auto;
-  padding: 2px 5px;
-  border: 1px solid var(--line-strong);
-  border-radius: 4px;
+  padding: 2px 7px;
+  border-radius: var(--pill);
+  background: var(--surface-2);
   font-size: 10px;
-  font-weight: 650;
-  line-height: 1.3;
-  color: var(--text-dim);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--muted);
   white-space: nowrap;
 }
 .flag.warn {
   color: var(--warn-text);
   background: var(--warn-bg);
-  border-color: var(--warn-line);
 }
 
+/* Reorder controls. The mockup left these out; the feature needs them, so
+   they're drawn as quiet ghost buttons that don't compete with the switch. */
 .order {
   flex: 0 0 auto;
   display: flex;
-  gap: 1px;
+  gap: 2px;
 }
 
 .icon-btn {
-  width: 22px;
-  height: 24px;
+  width: 20px;
+  height: 22px;
   display: grid;
   place-items: center;
   padding: 0;
   border: 0;
-  border-radius: 4px;
+  border-radius: 6px;
   background: none;
-  color: var(--text-faint);
+  color: var(--muted);
   cursor: pointer;
 }
-.icon-btn svg { width: 14px; height: 14px; }
-.icon-btn:hover:not(:disabled) { color: var(--text); background: var(--bg-sunken); }
-.icon-btn:disabled { opacity: 0.28; cursor: default; }
+.icon-btn svg { width: 12px; height: 12px; }
+.icon-btn:hover:not(:disabled) { color: var(--text); background: var(--surface-2); }
+.icon-btn:disabled { opacity: 0.3; cursor: default; }
 
 /* --- switches ------------------------------------------------------------- */
 .switch {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
   cursor: pointer;
 }
 .switch input {
@@ -274,85 +292,81 @@ body {
   white-space: nowrap;
   border: 0;
 }
+
 .track {
   position: relative;
   flex: 0 0 auto;
   width: 34px;
-  height: 20px;
-  border-radius: 999px;
-  background: var(--line-strong);
+  height: 14px;
+  border-radius: var(--pill);
+  background: var(--switch-off-track);
   transition: background 120ms ease;
 }
-.switch.small .track { width: 30px; height: 18px; }
 
 .knob {
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 16px;
-  height: 16px;
+  top: -3px;
+  left: -1px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  transition: transform 120ms ease;
+  background: var(--switch-off-knob);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  transition: left 120ms ease, background 120ms ease;
 }
-.switch.small .knob { width: 14px; height: 14px; }
 
-.switch input:checked + .track { background: var(--accent); }
-.switch input:checked + .track .knob { transform: translateX(14px); }
-.switch.small input:checked + .track .knob { transform: translateX(12px); }
+.switch input:checked + .track { background: var(--switch-on-track); }
+.switch input:checked + .track .knob { left: 15px; background: var(--accent); }
 
 .switch input:focus-visible + .track {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
+  outline: 2px solid var(--accent-line);
+  outline-offset: 3px;
 }
 
 .switch input:disabled + .track { opacity: 0.4; }
-.switch input:disabled ~ * { opacity: 0.5; }
 .switch:has(input:disabled) { cursor: default; }
 
 /* --- expanded body -------------------------------------------------------- */
 .card-body {
-  padding: 10px 10px 10px;
+  padding: 2px 10px 12px;
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 10px;
 }
 
 .field { display: flex; flex-direction: column; gap: 4px; }
 
 .field-label {
   font-size: 11px;
-  font-weight: 600;
-  color: var(--text-dim);
+  color: var(--muted);
 }
 
 .input {
   width: 100%;
-  padding: 6px 8px;
+  padding: 8px 12px;
   border: 1px solid var(--line-strong);
-  border-radius: var(--radius-sm);
-  background: var(--bg);
+  border-radius: var(--pill);
+  background: var(--input-bg);
   color: var(--text);
   font: inherit;
+  font-size: 12px;
 }
-.input::placeholder { color: var(--text-faint); }
-.input:focus-visible { outline-offset: 0; border-color: var(--focus); }
+.input::placeholder { color: var(--faint); }
+.input:focus-visible { outline: none; border-color: var(--accent-line); box-shadow: 0 0 0 1px var(--accent-line); }
 
 select.input {
   appearance: none;
-  padding-right: 26px;
-  background-image: linear-gradient(45deg, transparent 50%, var(--text-dim) 50%),
-                    linear-gradient(135deg, var(--text-dim) 50%, transparent 50%);
-  background-position: calc(100% - 14px) calc(50% + 1px), calc(100% - 9px) calc(50% + 1px);
+  padding-right: 28px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+                    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position: calc(100% - 16px) calc(50% + 1px), calc(100% - 11px) calc(50% + 1px);
   background-size: 5px 5px, 5px 5px;
   background-repeat: no-repeat;
 }
 
 .segmented {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4px;
+  display: flex;
+  gap: 6px;
 }
 
 .seg { position: relative; display: block; }
@@ -365,120 +379,128 @@ select.input {
 }
 .seg span {
   display: block;
-  padding: 6px 8px;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  border-radius: var(--pill);
+  background: var(--surface-2);
   text-align: center;
   font-size: 12px;
-  color: var(--text-dim);
+  color: var(--text);
   cursor: pointer;
 }
 .seg input:checked + span {
-  border-color: var(--accent);
   background: var(--accent);
-  color: var(--accent-text);
-  font-weight: 600;
+  color: var(--accent-ink);
+  font-weight: 500;
 }
 .seg input:focus-visible + span {
-  outline: 2px solid var(--focus);
+  outline: 2px solid var(--accent-line);
   outline-offset: 2px;
 }
 
 .checkline {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   font-size: 12px;
-  color: var(--text-dim);
+  color: var(--muted);
   cursor: pointer;
-  padding: 2px 0;
 }
 .checkline input { margin: 0; accent-color: var(--accent); }
 
 .hint {
   margin: 0;
-  padding: 6px 8px;
-  border-radius: var(--radius-sm);
+  padding: 7px 10px;
+  border-radius: 8px;
   font-size: 11.5px;
   color: var(--warn-text);
   background: var(--warn-bg);
-  border: 1px solid var(--warn-line);
 }
 
 .card-foot {
   display: flex;
-  justify-content: flex-end;
-  padding-top: 2px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .danger {
-  padding: 5px 9px;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  background: none;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: var(--pill);
+  background: var(--surface-2);
   color: var(--danger);
   font: inherit;
   font-size: 12px;
   cursor: pointer;
 }
-.danger:hover { border-color: var(--danger); }
+.danger:hover { background: var(--line-strong); }
 
 /* --- add button ----------------------------------------------------------- */
 .add {
   width: 100%;
   padding: 9px;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius);
-  background: var(--bg-sunken);
-  color: var(--text);
+  border: 0;
+  border-radius: var(--pill);
+  background: var(--text);
+  color: var(--bg);
   font: inherit;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
 }
-.add:hover { border-color: var(--text-faint); }
+.add:hover { opacity: 0.88; }
 .plus { font-weight: 500; }
 
 /* --- footer feedback ------------------------------------------------------ */
 .feedback { flex: 0 0 auto; }
 
-.status,
-.error {
+.status {
   margin: 0;
-  padding: 0 14px;
-  font-size: 11.5px;
-  color: var(--text-faint);
+  padding: 0 16px 10px;
+  font-size: 11px;
+  color: var(--faint);
 }
 .status:empty { display: none; }
-.status { padding-bottom: 8px; }
 
 .error {
-  padding: 8px 14px;
-  color: #fff;
-  background: var(--danger);
-  font-weight: 600;
+  margin: 0;
+  padding: 9px 16px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #FFFFFF;
+  background: var(--danger-bg);
 }
 
 .undo {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 14px;
+  padding: 9px 12px 9px 16px;
   border-top: 1px solid var(--line);
-  background: var(--bg-sunken);
+  background: var(--surface);
 }
-.undo-text { flex: 1 1 auto; font-size: 12px; color: var(--text-dim); }
+.undo-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--muted);
+}
 .undo-btn {
   flex: 0 0 auto;
-  padding: 4px 10px;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-sm);
-  background: var(--card);
+  padding: 5px 12px;
+  border: 0;
+  border-radius: var(--pill);
+  background: var(--surface-2);
   color: var(--text);
   font: inherit;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
 }
+.undo-btn:hover { background: var(--line-strong); }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }

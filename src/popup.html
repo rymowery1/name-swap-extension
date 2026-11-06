@@ -7,7 +7,12 @@
 </head>
 <body>
   <header class="topbar">
-    <h1 class="product">YouTube Title Changer</h1>
+    <svg class="mark" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <rect x="0" y="0" width="24" height="24" rx="6" fill="currentColor" opacity="0.14"/>
+      <rect x="5" y="8" width="14" height="2.6" rx="1.3" fill="currentColor"/>
+      <rect x="5" y="13.4" width="8" height="2.6" rx="1.3" fill="currentColor"/>
+    </svg>
+    <h1 class="product">Title Changer</h1>
     <div class="global-toggle">
       <label class="switch" for="global-enabled">
         <input type="checkbox" role="switch" id="global-enabled" checked>
@@ -120,15 +125,14 @@
                  placeholder="New text">
         </div>
 
-        <label class="checkline">
-          <input type="checkbox" class="case-sensitive">
-          <span>Match capital letters exactly</span>
-        </label>
-
         <p class="hint invalid-hint" hidden></p>
 
         <div class="card-foot">
-          <button type="button" class="danger delete-rule">Delete rule</button>
+          <label class="checkline">
+            <input type="checkbox" class="case-sensitive">
+            <span>Match capitals</span>
+          </label>
+          <button type="button" class="danger delete-rule">Delete</button>
         </div>
       </div>
     </li>
